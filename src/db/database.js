@@ -23,7 +23,7 @@ export async function createPoll(poll) { //finished
             };
         }
 
-        await db.collection('polls').insertOne({ newPoll });
+        await db.collection('polls').insertOne(newPoll);
         console.log(newPoll);
         return 'created';
 
@@ -45,40 +45,35 @@ export async function findPolls() { //finished
       }
 }
 
-async function newToken(user) { 
+export async function newChoice(choice) { 
     
-    const lastSession = await db.collection('tokens').findOne({userId: new ObjectId(user._id)});
-    const token = uuid();
-    const time = Date.now();
+    try {
+        // Exist poll check
+        const checkPollId = await db.collection('polls').findOne({_id: new ObjectId(choice.poolId)});
 
-    if(lastSession) {
-        if(time - lastSession.time < 50000 ) {
-            return lastSession;
+        if(!checkPollId) {
+            return '404';
         }
-        try {
-            await db.collection('tokens').updateOne({userId: new ObjectId(user._id)},
-            {
-                $set: {token, time}
-            })
-            return {
-                ...lastSession,
-                token,
-                time
-            };
-        } catch (error) {
-            return 'error';
+
+        // Same choice Check
+        const checkChoicesTitles = await db.collection('choices').findOne( {title: choice.title} );
+
+        if(checkChoicesTitles) {
+            return '409';
         }
+
+        // Expire check
+        const expireDateUnix = dayjs(checkPollId.expireAt).unix()
+        const todayDateUnix = dayjs().unix()
+    
+        if(expireDateUnix - todayDateUnix < 0) {
+            return '403';
+        }
+
+        await db.collection('choices').insertOne(choice)
+        return;
+
+    } catch (error) {
+        return 'error';
     }
-
-    let userData = {
-        name: user.name,
-        email: user.email,
-        userId: user._id,
-        token,
-        time
-    }
-
-    await db.collection('tokens').insertOne(userData);
-
-    return userData;
 }
