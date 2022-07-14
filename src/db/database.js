@@ -10,7 +10,7 @@ export async function createPoll(poll) { //finished
 
         console.log(isValidDate, ' é valido?')
         console.log(dayjs(poll.expireAt))
-        
+
         if(!isValidDate) { // if invalid expire data
 
             const newExpireDate = dayjs().add(30, 'day');
@@ -33,15 +33,11 @@ export async function createPoll(poll) { //finished
     }
 };
 
-async function findUser(user) { //finished
+export async function findPolls() { //finished
     try {
-        const userOnDatabase = await db.collection('users').findOne({ email: user.email });
+        const pollsOnDatabase = await db.collection('polls').find().toArray();
 
-        if (!userOnDatabase) {
-          return 'not found';
-        }
-    
-        return userOnDatabase;
+        return pollsOnDatabase;
 
       } catch (error) {
         console.error(error);
