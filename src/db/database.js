@@ -45,7 +45,7 @@ export async function findPolls() { //finished
       }
 }
 
-export async function newChoice(choice) { 
+export async function newChoice(choice) { //finished
     console.log(choice, 'no db')
     
     try {
@@ -95,4 +95,39 @@ export async function findChoices(id) { //finished
         console.error(error);
         return 'error';
       }
+}
+
+export async function newVote(id) { 
+    console.log(id, 'id no db')
+    
+    try {
+        const checkChoiceId = await db.collection('choices').findOne({_id: new ObjectId(id)});
+        console.log(checkChoiceId)
+        if(!checkChoiceId) {
+            console.log('x')
+            return '404';
+        }
+
+        const checkPollId = await db.collection('polls').findOne({_id: new ObjectId(checkChoiceId.poolId)});
+
+        const expireDateUnix = dayjs(checkPollId.expireAt).unix()
+        const todayDateUnix = dayjs().unix()
+        console.log(checkPollId)
+        if(expireDateUnix - todayDateUnix < 0) {
+            console.log('403')
+            return '403';
+        }
+
+        const newVote = {
+            choiceId: id,
+            date: dayjs().format('YYYY-MM-DD HH:mm')
+        }
+
+        await db.collection('votes').insertOne(newVote);
+
+        return 'created';
+
+    } catch (error) {
+        return 'error';
+    }
 }
