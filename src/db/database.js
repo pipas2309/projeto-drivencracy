@@ -50,9 +50,8 @@ export async function newChoice(choice) { //finished
     
     try {
         // Exist poll check
-        console.log('entrei no try')
         const checkPollId = await db.collection('polls').findOne({_id: new ObjectId(choice.poolId)});
-        console.log( 'pollid')
+
         if(!checkPollId) {
             console.log('404')
             return '404';
@@ -97,7 +96,7 @@ export async function findChoices(id) { //finished
       }
 }
 
-export async function newVote(id) { 
+export async function newVote(id) { //finished
     console.log(id, 'id no db')
     
     try {
@@ -130,4 +129,44 @@ export async function newVote(id) {
     } catch (error) {
         return 'error';
     }
+}
+
+export async function pollResult(id) { //finished
+    try {
+        // Exist poll check
+        const checkPollId = await db.collection('polls').findOne({_id: new ObjectId(id)});
+        console.log(checkPollId)
+
+        if(!checkPollId) {
+            console.log('404')
+            return '404';
+        }
+
+        const choicesOnDatabase = await db.collection('choices').find({poolId: id}).toArray();
+        let result = {
+            title: "",
+            votes: 0
+        };
+        let aux = 0;
+
+        for(let i = 0; i < choicesOnDatabase.length; i++) {
+            console.log(ObjectId(choicesOnDatabase[i]._id).toString(), i, 'oiiii')
+            aux = await (await db.collection('votes').find({choiceId: ObjectId(choicesOnDatabase[i]._id).toString()}).toArray()).length
+
+            if(aux > result.votes) {
+                result.votes = aux
+                result.title = choicesOnDatabase[i].title
+            }
+        }
+
+        const finalResult = {
+            ...checkPollId,
+            result
+        }
+        
+        return finalResult;
+
+      } catch (error) {
+        return 'error';
+      }
 }
