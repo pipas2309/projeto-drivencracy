@@ -11,8 +11,7 @@ async function validatePoll(req, res, next) {
             res.status(422).send("Enquete inválida, revise as propriedades do objeto enviado!");
             return;
         }
-        console.log(poll)
-
+        
         res.locals.poll = poll;
         next();
         

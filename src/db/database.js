@@ -46,19 +46,24 @@ export async function findPolls() { //finished
 }
 
 export async function newChoice(choice) { 
+    console.log(choice, 'no db')
     
     try {
         // Exist poll check
+        console.log('entrei no try')
         const checkPollId = await db.collection('polls').findOne({_id: new ObjectId(choice.poolId)});
-
+        console.log( 'pollid')
         if(!checkPollId) {
+            console.log('404')
             return '404';
+
         }
 
         // Same choice Check
         const checkChoicesTitles = await db.collection('choices').findOne( {title: choice.title} );
 
         if(checkChoicesTitles) {
+            console.log('409')
             return '409';
         }
 
@@ -67,6 +72,7 @@ export async function newChoice(choice) {
         const todayDateUnix = dayjs().unix()
     
         if(expireDateUnix - todayDateUnix < 0) {
+            console.log('403')
             return '403';
         }
 
@@ -74,6 +80,19 @@ export async function newChoice(choice) {
         return;
 
     } catch (error) {
+        console.log('erro aqui\n\n', error, '\n\nesse foi o erro\n\n');
         return 'error';
     }
+}
+
+export async function findChoices(id) { //finished
+    try {
+        const choicesOnDatabase = await db.collection('choices').find({poolId: id}).toArray();
+        console.log(choicesOnDatabase)
+        return choicesOnDatabase;
+
+      } catch (error) {
+        console.error(error);
+        return 'error';
+      }
 }

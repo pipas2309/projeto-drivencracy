@@ -2,10 +2,11 @@ import { newChoice } from "../db/database.js";
 
 export async function choice(req, res) {
     const choice = res.locals.choice;
+    console.log(choice)
     //trycatch
     const create = await newChoice(choice);
 
-    if(create === '404') {
+    if(create === '404' || create === 'error') {
         res.sendStatus(404);
         return;
     }

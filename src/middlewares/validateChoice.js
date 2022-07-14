@@ -10,7 +10,6 @@ async function validateChoice(req, res, next) {
             res.status(422).send("Escolha inválida, revise as propriedades do objeto enviado!");
             return;
         }
-        console.log(choice);
 
         res.locals.choice = choice;
         next();

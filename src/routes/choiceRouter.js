@@ -6,6 +6,6 @@ import validateChoice from '../middlewares/validateChoice.js';
 const router = express.Router();
 
 router.post("", validateChoice, choice);
-//.post("/:id/vote", );
+//router.post("/:id/vote", );
 
 export default router;
