@@ -35,15 +35,3 @@ export async function choiceValidate(choice) { //falta conferir se é repetido
     }
     
 }
-
-export async function voteValidate(vote) {
-    try {
-        const allowedvoteData = await voteSchema.validateAsync(vote, { abortEarly: false });
-        return allowedvoteData
-
-    } catch (error) {
-        console.log(error);
-        return 'error';
-    }
-    
-}

@@ -1,4 +1,4 @@
-import { findChoices, findPolls } from "../db/database.js";
+import { findChoices } from "../db/database.js";
 
 export async function allChoices(req, res) {
    //trycatch
