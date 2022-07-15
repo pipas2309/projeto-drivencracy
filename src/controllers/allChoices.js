@@ -6,6 +6,10 @@ export async function allChoices(req, res) {
     try {
         const choices = await findChoices(id);
 
+        if(!choices[0]) {
+            res.sendStatus(404);
+            return;  
+        }
         res.send(choices).status(200);
         return;
 

@@ -87,7 +87,7 @@ export async function newChoice(choice) { //finished
 export async function findChoices(id) { //finished
     try {
         const choicesOnDatabase = await db.collection('choices').find({poolId: id}).toArray();
-        console.log(choicesOnDatabase)
+
         return choicesOnDatabase;
 
       } catch (error) {
@@ -119,7 +119,7 @@ export async function newVote(id) { //finished
 
         const newVote = {
             choiceId: id,
-            date: dayjs().format('YYYY-MM-DD HH:mm')
+            createdAt: dayjs().format('YYYY-MM-DD HH:mm')
         }
 
         await db.collection('votes').insertOne(newVote);
